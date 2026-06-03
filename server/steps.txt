@@ -1,0 +1,33 @@
+npm i express mongoose dotenv cors cookie-parser bcryptjs jsonwebtoken multer pdf-parse nodemailer google-auth-library
+
+src/
+ ├─ config/
+ │  ├─ db.js
+ │  ├─ cors.js
+ │  └─ multer.js
+ ├─ controllers/
+ │  ├─ auth.controller.js
+ │  ├─ resume.controller.js
+ │  ├─ ai.controller.js
+ │  └─ email.controller.js
+ ├─ models/
+ │  ├─ User.js
+ │  ├─ Resume.js
+ │  └─ Analysis.js
+ ├─ routes/
+ │  ├─ auth.routes.js
+ │  ├─ resume.routes.js
+ │  ├─ ai.routes.js
+ │  └─ email.routes.js
+ ├─ middleware/
+ │  └─ auth.middleware.js
+ ├─ services/
+ │  ├─ ai.service.js
+ │  └─ email.service.js
+ ├─ utils/
+ │  └─ generateToken.js
+ ├─ app.js
+ └─ server.js
+
+
+ npm i @google/generative-ai
