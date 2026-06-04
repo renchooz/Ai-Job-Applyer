@@ -31,3 +31,6 @@ src/
 
 
  npm i @google/generative-ai
+
+
+ 
