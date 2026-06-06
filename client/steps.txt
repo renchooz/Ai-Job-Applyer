@@ -1,0 +1,46 @@
+npm create vite@latest client
+cd client
+npm i axios react-router-dom react-hot-toast lucide-react framer-motion
+npm i @react-oauth/google
+npm i tailwindcss @tailwindcss/vite
+
+
+src/
+ ├─ api/
+ │  ├─ axios.js
+ │  ├─ authApi.js
+ │  ├─ resumeApi.js
+ │  ├─ aiApi.js
+ │  ├─ gmailApi.js
+ │  └─ emailApi.js
+ │
+ ├─ context/
+ │  ├─ AuthContext.jsx
+ │  ├─ ResumeContext.jsx
+ │  ├─ AIContext.jsx
+ │  └─ GmailContext.jsx
+ │
+ ├─ utils/
+ │  ├─ validators.js
+ │  └─ errorHandler.js
+ │
+ ├─ routes/
+ │  └─ AppRoutes.jsx
+ │
+ ├─ pages/
+ │  ├─ Login.jsx
+ │  ├─ Dashboard.jsx
+ │  ├─ Resumes.jsx
+ │  ├─ Analyze.jsx
+ │  ├─ OneClickApply.jsx
+ │  ├─ EmailHistory.jsx
+ │  └─ Settings.jsx
+ │
+ ├─ components/
+ │  ├─ ProtectedRoute.jsx
+ │  └─ Loader.jsx
+ │
+ ├─ App.jsx
+ └─ main.jsx
+
+ npm i @base-ui/react class-variance-authority clsx tailwind-merge

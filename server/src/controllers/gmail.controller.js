@@ -66,3 +66,31 @@ export const gmailCallback = async (req, res) => {
     res.redirect(`${process.env.CLIENT_URL}/gmail-error`);
   }
 };
+
+
+export const getGmailStatus = async (req, res) => {
+  try {
+    const gmailToken = await GmailToken.findOne({
+      user: req.user._id
+    });
+
+    if (!gmailToken) {
+      return res.status(200).json({
+        success: true,
+        connected: false,
+        email: null
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      connected: true,
+      email: gmailToken.email
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

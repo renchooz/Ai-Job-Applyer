@@ -8,5 +8,4 @@ connectDB();
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log("Gemini Key:", process.env.GEMINI_API_KEY);
 });
