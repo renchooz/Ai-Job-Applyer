@@ -19,3 +19,7 @@ export const selectBestResumeApi = (payload) => {
 export const oneClickApplyApi = (payload) => {
   return api.post("/apply/one-click", payload);
 };
+
+export const previewApplicationApi = (payload) => {
+  return api.post("/apply/preview", payload);
+};

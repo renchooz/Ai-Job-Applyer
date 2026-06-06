@@ -1,8 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState
-} from "react";
+import { createContext, useContext, useState } from "react";
 import toast from "react-hot-toast";
 
 import {
@@ -10,7 +6,8 @@ import {
   generateEmailApi,
   generateCoverLetterApi,
   selectBestResumeApi,
-  oneClickApplyApi
+  oneClickApplyApi,
+  previewApplicationApi,
 } from "../api/aiApi";
 
 const AIContext = createContext(null);
@@ -23,6 +20,7 @@ export const AIProvider = ({ children }) => {
   const [coverLetter, setCoverLetter] = useState(null);
   const [bestResume, setBestResume] = useState(null);
   const [applicationResult, setApplicationResult] = useState(null);
+  const [applicationPreview, setApplicationPreview] = useState(null);
 
   const analyzeResume = async ({ resumeId, jobDescription }) => {
     try {
@@ -35,7 +33,7 @@ export const AIProvider = ({ children }) => {
 
       const { data } = await analyzeResumeApi({
         resumeId,
-        jobDescription
+        jobDescription,
       });
 
       setAnalysisResult(data.analysis);
@@ -50,11 +48,7 @@ export const AIProvider = ({ children }) => {
     }
   };
 
-  const generateEmail = async ({
-    resumeId,
-    jobDescription,
-    companyName
-  }) => {
+  const generateEmail = async ({ resumeId, jobDescription, companyName }) => {
     try {
       if (!resumeId || !jobDescription?.trim()) {
         toast.error("Resume and job description are required");
@@ -66,7 +60,7 @@ export const AIProvider = ({ children }) => {
       const { data } = await generateEmailApi({
         resumeId,
         jobDescription,
-        companyName
+        companyName,
       });
 
       setGeneratedEmail(data.email);
@@ -84,7 +78,7 @@ export const AIProvider = ({ children }) => {
   const generateCoverLetter = async ({
     resumeId,
     jobDescription,
-    companyName
+    companyName,
   }) => {
     try {
       if (!resumeId || !jobDescription?.trim()) {
@@ -97,7 +91,7 @@ export const AIProvider = ({ children }) => {
       const { data } = await generateCoverLetterApi({
         resumeId,
         jobDescription,
-        companyName
+        companyName,
       });
 
       setCoverLetter(data.coverLetter);
@@ -122,7 +116,7 @@ export const AIProvider = ({ children }) => {
       setAiLoading(true);
 
       const { data } = await selectBestResumeApi({
-        jobDescription
+        jobDescription,
       });
 
       setBestResume(data.bestResume);
@@ -137,11 +131,7 @@ export const AIProvider = ({ children }) => {
     }
   };
 
-  const oneClickApply = async ({
-    to,
-    companyName,
-    jobDescription
-  }) => {
+  const oneClickApply = async ({ to, companyName, jobDescription }) => {
     try {
       if (!to || !companyName || !jobDescription?.trim()) {
         toast.error("HR email, company name and job description are required");
@@ -153,7 +143,7 @@ export const AIProvider = ({ children }) => {
       const { data } = await oneClickApplyApi({
         to,
         companyName,
-        jobDescription
+        jobDescription,
       });
 
       setApplicationResult(data.application);
@@ -162,6 +152,32 @@ export const AIProvider = ({ children }) => {
       return data.application;
     } catch (error) {
       toast.error(error.message || "Application failed");
+      return null;
+    } finally {
+      setAiLoading(false);
+    }
+  };
+  const previewApplication = async ({ to, companyName, jobDescription }) => {
+    try {
+      if (!to || !companyName || !jobDescription?.trim()) {
+        toast.error("HR email, company name and job description are required");
+        return null;
+      }
+
+      setAiLoading(true);
+
+      const { data } = await previewApplicationApi({
+        to,
+        companyName,
+        jobDescription,
+      });
+
+      setApplicationPreview(data.preview);
+      toast.success("Application preview generated");
+
+      return data.preview;
+    } catch (error) {
+      toast.error(error.message || "Preview generation failed");
       return null;
     } finally {
       setAiLoading(false);
@@ -190,7 +206,10 @@ export const AIProvider = ({ children }) => {
         generateCoverLetter,
         selectBestResume,
         oneClickApply,
-        clearAIResults
+        clearAIResults,
+        applicationPreview,
+        previewApplication,
+        setApplicationPreview,
       }}
     >
       {children}

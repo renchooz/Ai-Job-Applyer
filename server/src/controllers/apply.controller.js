@@ -118,3 +118,73 @@ export const oneClickApply = async (req, res) => {
     });
   }
 };
+
+
+export const previewApplication = async (req, res) => {
+  try {
+    const { to, companyName, jobDescription } = req.body;
+
+    if (!to || !companyName || !jobDescription) {
+      return res.status(400).json({
+        success: false,
+        message: "to, companyName and jobDescription are required"
+      });
+    }
+
+    const resumes = await Resume.find({
+      user: req.user._id
+    }).select("-extractedText");
+
+    const resumesWithText = await Resume.find({
+      user: req.user._id
+    });
+
+    if (!resumesWithText.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No resumes found"
+      });
+    }
+
+    const bestResumeResult = await selectBestResume(
+      resumesWithText,
+      jobDescription
+    );
+
+    const selectedResume = await Resume.findOne({
+      _id: bestResumeResult.resumeId,
+      user: req.user._id
+    });
+
+    const generatedEmail = await generateJobEmail(
+      selectedResume.extractedText,
+      jobDescription,
+      companyName
+    );
+
+    res.status(200).json({
+      success: true,
+      preview: {
+        to,
+        companyName,
+        jobDescription,
+        selectedResume: {
+          id: selectedResume._id,
+          name: selectedResume.originalName,
+          matchScore: bestResumeResult.matchScore,
+          reason: bestResumeResult.reason
+        },
+        allResumes: resumes,
+        email: {
+          subject: generatedEmail.subject,
+          body: generatedEmail.emailBody
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

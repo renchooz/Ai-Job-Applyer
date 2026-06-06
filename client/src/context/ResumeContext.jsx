@@ -116,31 +116,25 @@ export const ResumeProvider = ({ children }) => {
   };
 
   const deleteResume = async (resumeId) => {
-    try {
-      const confirmDelete = window.confirm(
-        "Are you sure you want to delete this resume?"
-      );
+  try {
+    await deleteResumeApi(resumeId);
 
-      if (!confirmDelete) return false;
+    setResumes((prev) =>
+      prev.filter((resume) => resume._id !== resumeId)
+    );
 
-      await deleteResumeApi(resumeId);
-
-      setResumes((prev) =>
-        prev.filter((resume) => resume._id !== resumeId)
-      );
-
-      if (selectedResume?._id === resumeId) {
-        setSelectedResume(null);
-      }
-
-      toast.success("Resume deleted successfully");
-
-      return true;
-    } catch (error) {
-      toast.error(error.message || "Delete failed");
-      return false;
+    if (selectedResume?._id === resumeId) {
+      setSelectedResume(null);
     }
-  };
+
+    toast.success("Resume deleted successfully");
+
+    return true;
+  } catch (error) {
+    toast.error(error.message || "Delete failed");
+    return false;
+  }
+};
 
   return (
     <ResumeContext.Provider

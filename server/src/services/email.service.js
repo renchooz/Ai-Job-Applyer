@@ -5,15 +5,30 @@ import { google } from "googleapis";
 import GmailToken from "../models/GmailToken.js";
 import { createOAuthClient } from "./gmailOAuth.service.js";
 
-const makeBody = ({ to, from, subject, body, attachmentPath, attachmentName }) => {
+const makeBody = ({
+  to,
+  from,
+  subject,
+  body,
+  attachmentPath,
+  attachmentName,
+}) => {
   const boundary = "boundary_" + Date.now();
-
+  const sanitizeSubject = (subject) => {
+    return subject
+      .replace(/–/g, "-")
+      .replace(/—/g, "-")
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'");
+  };
   const attachment = fs.readFileSync(attachmentPath).toString("base64");
+  const safeSubject = sanitizeSubject(subject);
+
 
   const messageParts = [
     `From: ${from}`,
     `To: ${to}`,
-    `Subject: ${subject}`,
+    `Subject: ${safeSubject}`,
     "MIME-Version: 1.0",
     `Content-Type: multipart/mixed; boundary="${boundary}"`,
     "",
@@ -30,7 +45,7 @@ const makeBody = ({ to, from, subject, body, attachmentPath, attachmentName }) =
     "",
     attachment,
     "",
-    `--${boundary}--`
+    `--${boundary}--`,
   ];
 
   const message = messageParts.join("\n");
@@ -47,7 +62,7 @@ export const sendGmailWithAttachment = async ({
   to,
   subject,
   body,
-  resume
+  resume,
 }) => {
   const gmailToken = await GmailToken.findOne({ user: userId });
 
@@ -60,12 +75,12 @@ export const sendGmailWithAttachment = async ({
   oauth2Client.setCredentials({
     access_token: gmailToken.accessToken,
     refresh_token: gmailToken.refreshToken,
-    expiry_date: gmailToken.expiryDate
+    expiry_date: gmailToken.expiryDate,
   });
 
   const gmail = google.gmail({
     version: "v1",
-    auth: oauth2Client
+    auth: oauth2Client,
   });
 
   const attachmentPath = path.resolve(resume.filePath);
@@ -76,18 +91,18 @@ export const sendGmailWithAttachment = async ({
     subject,
     body,
     attachmentPath,
-    attachmentName: resume.originalName
+    attachmentName: resume.originalName,
   });
 
   const response = await gmail.users.messages.send({
     userId: "me",
     requestBody: {
-      raw
-    }
+      raw,
+    },
   });
 
   return {
     messageId: response.data.id,
-    from: gmailToken.email
+    from: gmailToken.email,
   };
 };
