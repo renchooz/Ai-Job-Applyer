@@ -61,7 +61,7 @@ export const gmailCallback = async (req, res) => {
       },
     );
 
-    res.redirect(`${process.env.CLIENT_URL}/gmail-connected`);
+    res.redirect(`${process.env.CLIENT_URL}/dashboard?gmail=connected`)
   } catch (error) {
     res.redirect(`${process.env.CLIENT_URL}/gmail-error`);
   }

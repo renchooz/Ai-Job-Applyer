@@ -161,7 +161,11 @@ export const getResumePreview = async (req, res) => {
       });
     }
 
-    const previewUrl = `${req.protocol}://${req.get("host")}/uploads/${resume.fileName}`;
+    const baseUrl =
+      process.env.SERVER_URL ||
+      `${req.protocol}://${req.get("host")}`;
+
+    const previewUrl = `${baseUrl}/uploads/${resume.fileName}`;
 
     res.status(200).json({
       success: true,
