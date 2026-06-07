@@ -3,20 +3,22 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 
-import Login from "../pages/Login.jsx";
+import LandingPage from "../pages/LandingPage";
+import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Resumes from "../pages/Resumes";
 import Analyze from "../pages/Analyze";
+import CoverLetter from "../pages/CoverLetter";
 import OneClickApply from "../pages/OneClickApply";
 import EmailHistory from "../pages/EmailHistory";
 import Settings from "../pages/Settings";
-import LandingPage from "../pages/LandingPage";
 
 const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
-<Route path="/landing" element={<LandingPage />} />
+
       <Route
         element={
           <ProtectedRoute>
@@ -24,9 +26,10 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/resumes" element={<Resumes />} />
         <Route path="/analyze" element={<Analyze />} />
+        <Route path="/cover-letter" element={<CoverLetter />} />
         <Route path="/one-click-apply" element={<OneClickApply />} />
         <Route path="/email-history" element={<EmailHistory />} />
         <Route path="/settings" element={<Settings />} />

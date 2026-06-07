@@ -7,12 +7,14 @@ import {
 import toast from "react-hot-toast";
 
 import { getEmailHistoryApi } from "../api/emailApi";
+import { useAuth } from "./AuthContext";
 
 const EmailHistoryContext = createContext(null);
 
 export const EmailHistoryProvider = ({ children }) => {
   const [emailLoading, setEmailLoading] = useState(false);
   const [emails, setEmails] = useState([]);
+  const { user } = useAuth();
 
   const fetchEmailHistory = async () => {
     try {
@@ -30,9 +32,13 @@ export const EmailHistoryProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
+ useEffect(() => {
+  if (user) {
     fetchEmailHistory();
-  }, []);
+  } else {
+    setEmails([]);
+  }
+}, [user]);
 
   return (
     <EmailHistoryContext.Provider

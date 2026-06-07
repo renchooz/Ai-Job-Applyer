@@ -6,13 +6,14 @@ import {
   Send,
   History,
   Settings,
-  Sparkles
+  Sparkles,
+  PenLine
 } from "lucide-react";
 
 const links = [
   {
     name: "Dashboard",
-    path: "/",
+    path: "/dashboard",
     icon: LayoutDashboard
   },
   {
@@ -25,6 +26,11 @@ const links = [
     path: "/analyze",
     icon: ScanSearch
   },
+  {
+  name: "Cover Letter",
+  path: "/cover-letter",
+  icon: PenLine
+},
   {
     name: "One Click Apply",
     path: "/one-click-apply",
@@ -68,7 +74,7 @@ const Sidebar = () => {
             <NavLink
               key={item.path}
               to={item.path}
-              end={item.path === "/"}
+              end={item.path === "/dashboard"}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
                   isActive

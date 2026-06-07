@@ -13,6 +13,7 @@ import {
   renameResumeApi,
   deleteResumeApi
 } from "../api/resumeApi";
+import { useAuth } from "./AuthContext";
 
 const ResumeContext = createContext(null);
 
@@ -20,6 +21,7 @@ export const ResumeProvider = ({ children }) => {
   const [resumes, setResumes] = useState([]);
   const [resumeLoading, setResumeLoading] = useState(false);
   const [selectedResume, setSelectedResume] = useState(null);
+  const { user } = useAuth();
 
   const fetchResumes = async () => {
     try {
@@ -36,8 +38,13 @@ export const ResumeProvider = ({ children }) => {
   };
 
   useEffect(() => {
+  if (user) {
     fetchResumes();
-  }, []);
+  } else {
+    setResumes([]);
+    setSelectedResume(null);
+  }
+}, [user]);
 
   const uploadResume = async (file) => {
     try {

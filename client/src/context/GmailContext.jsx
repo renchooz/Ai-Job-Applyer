@@ -10,13 +10,16 @@ import {
   getGmailAuthUrlApi,
   getGmailStatusApi
 } from "../api/gmailApi";
+import { useAuth } from "./AuthContext";
 
 const GmailContext = createContext(null);
+
 
 export const GmailProvider = ({ children }) => {
   const [gmailLoading, setGmailLoading] = useState(false);
   const [gmailConnected, setGmailConnected] = useState(false);
   const [gmailEmail, setGmailEmail] = useState(null);
+  const { user } = useAuth();
 
   const fetchGmailStatus = async () => {
     try {
@@ -38,8 +41,13 @@ export const GmailProvider = ({ children }) => {
   };
 
   useEffect(() => {
+  if (user) {
     fetchGmailStatus();
-  }, []);
+  } else {
+    setGmailConnected(false);
+    setGmailEmail(null);
+  }
+}, [user]);
 
   const connectGmail = async () => {
     try {

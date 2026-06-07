@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import {
@@ -9,6 +9,7 @@ import {
   oneClickApplyApi,
   previewApplicationApi,
 } from "../api/aiApi";
+import { useAuth } from "./AuthContext";
 
 const AIContext = createContext(null);
 
@@ -21,6 +22,22 @@ export const AIProvider = ({ children }) => {
   const [bestResume, setBestResume] = useState(null);
   const [applicationResult, setApplicationResult] = useState(null);
   const [applicationPreview, setApplicationPreview] = useState(null);
+  const { user } = useAuth();
+
+  const clearAIResults = () => {
+  setAnalysisResult(null);
+  setGeneratedEmail(null);
+  setCoverLetter(null);
+  setBestResume(null);
+  setApplicationResult(null);
+  setApplicationPreview(null);
+};
+
+useEffect(() => {
+  if (!user) {
+    clearAIResults();
+  }
+}, [user]);
 
   const analyzeResume = async ({ resumeId, jobDescription }) => {
     try {
@@ -184,13 +201,7 @@ export const AIProvider = ({ children }) => {
     }
   };
 
-  const clearAIResults = () => {
-    setAnalysisResult(null);
-    setGeneratedEmail(null);
-    setCoverLetter(null);
-    setBestResume(null);
-    setApplicationResult(null);
-  };
+
 
   return (
     <AIContext.Provider
