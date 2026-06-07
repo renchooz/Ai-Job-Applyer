@@ -36,6 +36,6 @@ jobs:
            ${{ secrets.DOCKER_USERNAME }}/ai-resume-client:latest
            ${{ secrets.DOCKER_USERNAME }}/ai-resume-client:${{ github.sha }}
           build-args: |
-            VITE_API_URL={{ secrets.VITE_API_URL }} 
+            VITE_API_URL=${{ secrets.VITE_API_URL }} 
             VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}      
     
