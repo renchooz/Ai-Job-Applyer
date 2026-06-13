@@ -2,10 +2,9 @@ name: Deploy to EC2
 
 on:
   workflow_call:
-  
+
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
