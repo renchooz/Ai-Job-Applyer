@@ -2,14 +2,18 @@ FROM node:22-alpine as deps
 
 WORKDIR /app
 
+RUN apk update && apk upgrade --no-cache
+
 COPY package*.json ./
 
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
 
 FROM node:22-alpine
 
 WORKDIR /app
+
+RUN apk update && apk upgrade --no-cache
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY package*.json ./
