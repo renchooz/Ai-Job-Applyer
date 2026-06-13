@@ -1,0 +1,43 @@
+name: Security Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest   
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Secret Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install Server Dependencies
+        working-directory: ./server
+        run: npm ci
+
+# this will check vulnarable packages in file
+      - name: Audit Server Dependencies    
+        working-directory: ./server
+        run: npm audit --audit-level=high         
+
+      - name: Install Client Dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: Audit Client Dependencies
+        working-directory: ./client
+        run: npm audit --audit-level=high  
+

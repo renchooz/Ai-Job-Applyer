@@ -1,9 +1,10 @@
 name: Build and Push Docker Images
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Security Checks"]
+    types:
+      - completed
 
 jobs:
   docker:
@@ -22,10 +23,45 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: ./server
-          push: true
+          push: false
           tags: |
            ${{ secrets.DOCKER_USERNAME }}/ai-resume-server:latest
            ${{ secrets.DOCKER_USERNAME }}/ai-resume-server:${{ github.sha }}
+
+      - name: Scan Server Image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/ai-resume-server:${{ github.sha }}
+          severity: CRITICAL,HIGH
+          exit-code: 1    
+
+      - name: Build and Push Server
+        uses: docker/build-push-action@v7
+        with:
+          context: ./server
+          push: true
+          tags: |
+           ${{ secrets.DOCKER_USERNAME }}/ai-resume-server:latest
+           ${{ secrets.DOCKER_USERNAME }}/ai-resume-server:${{ github.sha }}     
+
+      - name: Build and Push Client
+        uses: docker/build-push-action@v7
+        with:
+          context: ./client
+          push: false
+          tags: |
+           ${{ secrets.DOCKER_USERNAME }}/ai-resume-client:latest
+           ${{ secrets.DOCKER_USERNAME }}/ai-resume-client:${{ github.sha }}
+          build-args: |
+            VITE_API_URL=${{ secrets.VITE_API_URL }} 
+            VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}   
+
+      - name: Scan Server Image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKER_USERNAME }}/ai-resume-client:${{ github.sha }}
+          severity: CRITICAL,HIGH
+          exit-code: 1        
 
       - name: Build and Push Client
         uses: docker/build-push-action@v7
@@ -37,5 +73,5 @@ jobs:
            ${{ secrets.DOCKER_USERNAME }}/ai-resume-client:${{ github.sha }}
           build-args: |
             VITE_API_URL=${{ secrets.VITE_API_URL }} 
-            VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}      
+            VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}     
     
